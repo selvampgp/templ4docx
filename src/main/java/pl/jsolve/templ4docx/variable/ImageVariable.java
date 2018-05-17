@@ -2,10 +2,12 @@ package pl.jsolve.templ4docx.variable;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
+
 
 public class ImageVariable implements Variable {
 
@@ -34,13 +36,38 @@ public class ImageVariable implements Variable {
             this.key = key;
             this.imageFile = imageFile;
             this.imagePath = imageFile.getAbsolutePath();
-            this.imageStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(imageFile));
+            this.imageStream = new ByteArrayInputStream(convertToByteArray(imageFile));
             this.width = width;
             this.height = height;
             this.imageType = imageType;
-    	} catch(IOException e) {
+    	} catch(Exception e) {
     		e.printStackTrace();
     	}
+    }
+    
+    private byte[] convertToByteArray(File file){
+    	
+    	  byte[] bytesArray = new byte[(int) file.length()]; 
+
+    	  FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+			fis.read(bytesArray);
+	    	fis.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		finally{
+			try {
+				fis.close();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+    	  
+    	 return bytesArray;
     }
 
     public ImageVariable(String key, InputStream imageStream, ImageType imageType, int width, int height) {
